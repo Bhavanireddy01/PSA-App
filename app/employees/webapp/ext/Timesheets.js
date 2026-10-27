@@ -37,18 +37,18 @@ sap.ui.define([
     function getEmployeeId(oContext) {
         let id = null;
 
-        // Check if context has getProperty
+        // Context check
         if (oContext && typeof oContext.getProperty === "function") {
             id = oContext.getProperty("ID") || oContext.getProperty("employee_ID");
         }
 
-        // Check parent/view binding context
+        // Binding context check
         if (!id && oContext && typeof oContext.getBindingContext === "function") {
             const bCtx = oContext.getBindingContext();
             id = bCtx && typeof bCtx.getProperty === "function" ? (bCtx.getProperty("ID") || bCtx.getProperty("employee_ID")) : null;
         }
 
-        // Fallback: URL hash
+        // URL hash fallback
         if (!id) {
             const hash = decodeURIComponent(window.location.hash || "");
             const m = hash.match(/Employees\((?:ID=)?['"]?([0-9a-fA-F-]+|\d+)['"]?\)/);
@@ -136,11 +136,8 @@ sap.ui.define([
         dlg.open();
     }
 
-    const TimesheetsExtension = ControllerExtension.extend("employees.ext.Timesheets", {
-        // Empty extension skeleton to register without errors in controllerExtensions
-    });
+    const TimesheetsExtension = ControllerExtension.extend("employees.ext.Timesheets", {});
 
-    // Attach static handler functions to the class object so Fiori elements can resolve them directly:
     TimesheetsExtension.onCreateTimesheet = async function (oContext) {
         try {
             const empId = getEmployeeId(oContext);
@@ -177,7 +174,7 @@ sap.ui.define([
                     subDate = todayLocal();
                 }
 
-                const empFilter = isNaN(empId) ? `employee_ID eq '${empId}'` : `employee_ID eq ${empId}`;
+                const empFilter = isNaN(empId) ? `employee_ID eq ${empId}` : `employee_ID eq ${empId}`;
                 const dup = await api("GET", `Timesheets?$select=ID&$filter=${empFilter} and weekStartDate eq ${v.weekStartDate}`);
                 if (dup.value && dup.value.length > 0) {
                     throw new Error("A timesheet for the week of " + v.weekStartDate + " already exists.");
@@ -201,84 +198,7 @@ sap.ui.define([
         }
     };
 
-    TimesheetsExtension.onSubmitSelected = function (oContext, aSelected) {
-        const contexts = Array.isArray(aSelected) && aSelected.length > 0
-            ? aSelected
-            : (Array.isArray(oContext) ? oContext : (oContext ? [oContext] : []));
-
-        const ids = contexts.map(c => {
-            if (typeof c.getProperty === "function") return c.getProperty("ID");
-            if (c.getObject && typeof c.getObject === "function") return c.getObject().ID;
-            return null;
-        }).filter(Boolean);
-
-        if (!ids.length) {
-            MessageToast.show("Please select at least one timesheet row using the checkbox");
-            return;
-        }
-
-        MessageBox.confirm(`Submit ${ids.length} selected timesheet(s) for manager approval?`, {
-            onClose: async (action) => {
-                if (action !== MessageBox.Action.OK) return;
-                let successCount = 0;
-                const errors = [];
-
-                for (const id of ids) {
-                    try {
-                        const qId = isNaN(id) ? `'${id}'` : id;
-                        await api("POST", `Timesheets(${qId})/PSAService.SubmitTimesheet`, {});
-                        successCount++;
-                    } catch (e) {
-                        errors.push(e.message || String(e));
-                    }
-                }
-
-                if (errors.length) {
-                    MessageBox.error(`${successCount} submitted, but errors occurred:\n` + errors.join("\n"));
-                } else {
-                    MessageToast.show("Timesheet(s) submitted successfully");
-                }
-                refreshTable(oContext);
-            }
-        });
-    };
-
-    TimesheetsExtension.onDeleteSelected = function (oContext, aSelected) {
-        const contexts = Array.isArray(aSelected) && aSelected.length > 0
-            ? aSelected
-            : (Array.isArray(oContext) ? oContext : (oContext ? [oContext] : []));
-
-        const ids = contexts.map(c => {
-            if (typeof c.getProperty === "function") return c.getProperty("ID");
-            if (c.getObject && typeof c.getObject === "function") return c.getObject().ID;
-            return null;
-        }).filter(Boolean);
-
-        if (!ids.length) {
-            MessageToast.show("Please select at least one draft timesheet to delete");
-            return;
-        }
-
-        MessageBox.confirm(`Delete ${ids.length} selected timesheet(s)?`, {
-            onClose: async (action) => {
-                if (action !== MessageBox.Action.OK) return;
-                for (const id of ids) {
-                    try {
-                        await api("POST", "DeleteTimesheet", { TimesheetID: id });
-                    } catch (e) {
-                        MessageBox.error(e.message || String(e));
-                    }
-                }
-                MessageToast.show("Timesheet(s) deleted");
-                refreshTable(oContext);
-            }
-        });
-    };
-
-    // Also mirror methods on the prototype for compatibility
     TimesheetsExtension.prototype.onCreateTimesheet = TimesheetsExtension.onCreateTimesheet;
-    TimesheetsExtension.prototype.onSubmitSelected = TimesheetsExtension.onSubmitSelected;
-    TimesheetsExtension.prototype.onDeleteSelected = TimesheetsExtension.onDeleteSelected;
 
     return TimesheetsExtension;
 });

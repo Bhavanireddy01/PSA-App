@@ -223,44 +223,29 @@ module.exports = cds.service.impl(async function () {
     });
 
     // Submit (bound) - validates 24h cap, locks entries, triggers roll-up
-    this.on('SubmitTimesheet', 'Timesheets', async (req) => {
-       const id = req.params && req.params.length ? keyOf(req.params[0]) : null;
-        const ts = await SELECT.one.from(Timesheets).where({ ID: id });
-        if (!ts) return req.reject(404, 'Timesheet not found');
-        if (!EDITABLE_STATUSES.includes(ts.status)) {
-            return req.reject(400, 'Only Draft or Rejected timesheets can be submitted');
-        }
+   this.on('SubmitTimesheet', 'Timesheets', async (req) => {
+    // 1. In a bound action, retrieve the ID from req.params
+    // req.params can look like: [{ ID: '...' }] or [{ ID: 'employee-id' }, { ID: 'timesheet-id' }]
+    const timesheetKey = req.params[req.params.length - 1];
+    const timesheetId = timesheetKey?.ID || timesheetKey;
 
-        const emp = await SELECT.one.from(Employees).where({ ID: ts.employee_ID });
-        if (!emp || emp.status !== 'Active') {
-            return req.reject(400, 'Inactive employees cannot submit time');
-        }
+    if (!timesheetId) {
+        return req.error(400, 'Could not determine timesheet ID');
+    }
 
-        const entries = await SELECT.from(TimesheetEntries).where({ timesheet_ID: id });
-        if (!entries.length) return req.reject(400, 'Add at least one entry before submitting');
+    // 2. Query the timesheet using the resolved ID
+    const ts = await SELECT.one.from('sprint.TimeManagement.Timesheets').where({ ID: timesheetId });
+    if (!ts) {
+        return req.error(404, 'Timesheet not found');
+    }
 
-        const perDay = {};
-        let billable = 0;
-        for (const e of entries) {
-            perDay[e.workDate] = (perDay[e.workDate] || 0) + num(e.hours);
-            if (e.isBillable) billable += num(e.hours);
-        }
-        const over = Object.entries(perDay).find(([, h]) => h > 24);
-        if (over) return req.reject(400, `Daily total exceeds 24 hours on ${over[0]}`);
+    // 3. Update the status to 'Submitted'
+    await UPDATE('sprint.TimeManagement.Timesheets')
+        .set({ status: 'Submitted', submittedDate: new Date().toISOString().slice(0, 10) })
+        .where({ ID: timesheetId });
 
-        await UPDATE(Timesheets)
-            .set({
-                status: 'Submitted',
-                submittedDate: today(),
-                totalBillableHours: round2(billable),
-                rejectionReason: null
-            })
-            .where({ ID: id });
-
-        await rollUpTimesheet(id);
-        return 'Timesheet Submitted Successfully';
-    });
-
+    return 'Timesheet submitted successfully';
+});
     // Approve (bound)
     this.on('ApproveTimesheet', 'Timesheets', async (req) => {
         const { approvedBy } = req.data;

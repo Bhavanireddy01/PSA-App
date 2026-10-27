@@ -49,6 +49,8 @@
                                         <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Client"/></Column>
                                         <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Billing"/></Column>
                                         <Column><Text text="Status"/></Column>
+                                        <Column><Text text="Start Date"/></Column>
+                                        <Column><Text text="End Date"/></Column>
                                         <Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="Planned h"/></Column>
                                         <Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="Consumed h"/></Column>
                                         <Column width="9rem"><Text text="Hours Burn"/></Column>
@@ -62,9 +64,11 @@
                                                 <Text text="{ui>billingType}"/>
                                                 <ObjectStatus text="{ui>status}"
                                                     state="{= ${ui>status}==='Active' ? 'Success' : ${ui>status}==='OnHold' ? 'Warning' : 'None'}"/>
+                                                    <Text text="{ui>startDate}"/>
+                                                    <Text text="{ui>endDate}"/>
                                                 <ObjectNumber number="{ui>plannedHours}"/>
                                                 <ObjectNumber number="{ui>consumedHours}"/>
-                                                <ProgressIndicator percentValue="{ui>burn}" displayValue="{ui>burn}%"
+                                                <ProgressIndicator percentValue="{ui>burn}" displayValue="burn"
                                                     state="{= ${ui>burn} >= 100 ? 'Error' : ${ui>burn} >= 80 ? 'Warning' : 'Success'}"/>
                                             </cells>
                                         </ColumnListItem>
@@ -92,7 +96,8 @@
                                     </headerToolbar>
                                     <columns>
                                         <Column><Text text="Employee"/></Column>
-                                        <Column><Text text="Week Period"/></Column>
+                                        <Column><Text text="Week Start Date"/></Column>
+                                        <Column><Text text="Week End Date"/></Column>
                                         <Column hAlign="End"><Text text="Billable Hours"/></Column>
                                         <Column><Text text="Submitted Date"/></Column>
                                         <Column><Text text="Status"/></Column>
@@ -101,7 +106,9 @@
                                         <ColumnListItem>
                                             <cells>
                                                 <ObjectIdentifier title="{ui>employeeName}" text="{ui>employeeEmail}"/>
-                                                <Text text="{ui>weekStartDate} -> {ui>weekEndDate}"/>
+                                                <Text text="{ui>weekStartDate}"/>
+<Text text="{ui>weekEndDate}"/>
+                                               
                                                 <ObjectNumber number="{ui>totalBillableHours}" unit="h"/>
                                                 <Text text="{ui>submittedDate}"/>
                                                 <ObjectStatus text="{ui>status}" state="Warning"/>
@@ -129,7 +136,7 @@
                                                 <ObjectNumber number="{ui>budgetAmt}" unit="{ui>currencyCode}"/>
                                                 <ObjectNumber number="{ui>consumedAmt}" unit="{ui>currencyCode}"/>
                                                 <ObjectNumber number="{ui>remainingAmt}" unit="{ui>currencyCode}"/>
-                                                <ProgressIndicator percentValue="{ui>burnPercent}" displayValue="{ui>burnPercent}%"
+                                                <ProgressIndicator percentValue="{ui>burnPercent}" displayValue="burn"
                                                     state="{= ${ui>burnPercent} >= 100 ? 'Error' : 'Warning'}"/>
                                                 <ObjectStatus text="{ui>status}"
                                                     state="{= ${ui>status}==='Breached' ? 'Error' : 'Warning'}"/>

@@ -8,21 +8,6 @@
             <Button text="Delete" icon="sap-icon://delete" type="Reject" press=".onDelete"/>
         </headerContent>
         <content>
-            <ObjectHeader title="{ui>/p/projectCode} – {ui>/p/projectName}"
-                          number="{ui>/p/burn}" numberUnit="% hours burnt"
-                          numberState="{= ${ui>/p/burn} >= 100 ? 'Error' : ${ui>/p/burn} >= 80 ? 'Warning' : 'Success'}">
-                <attributes>
-                    <ObjectAttribute title="Client" text="{ui>/p/clientName}"/>
-                    <ObjectAttribute title="Manager" text="{ui>/p/managerName}"/>
-                    <ObjectAttribute title="Billing / Priority" text="{ui>/p/billingType} / {ui>/p/priority}"/>
-                    <ObjectAttribute title="Period" text="{ui>/p/startDate} → {ui>/p/endDate}"/>
-                    <ObjectAttribute title="Hours" text="{ui>/p/consumedHours} of {ui>/p/plannedHours}"/>
-                </attributes>
-                <statuses>
-                    <ObjectStatus text="{ui>/p/status}"
-                        state="{= ${ui>/p/status}==='Active' ? 'Success' : ${ui>/p/status}==='OnHold' ? 'Warning' : ${ui>/p/status}==='Cancelled' ? 'Error' : 'None'}"/>
-                </statuses>
-            </ObjectHeader>
 
             <IconTabBar expandable="false" class="sapUiResponsiveContentPadding">
                 <items>
@@ -68,7 +53,7 @@
                                         <Text text="{ui>endDate}"/>
                                         <Text text="{ui>priority}"/>
                                         <Text text="{ui>status}"/>
-                                        <ProgressIndicator percentValue="{ui>completionPercent}" displayValue="{ui>completionPercent}%"/>
+                                        <ProgressIndicator percentValue="{ui>completionPercent}" displayValue="completionPercent"/>
                                     </cells>
                                 </ColumnListItem>
                             </items>

@@ -70,6 +70,7 @@ annotate service.Employees with @(
     }
 );
 
+// 1. Table Action Button
 annotate service.Timesheets with @(
     UI.LineItem #EmpTimesheets: [
         { Value: weekStartDate, ![@UI.Importance]: #High },
@@ -79,20 +80,29 @@ annotate service.Timesheets with @(
         { Value: status, Criticality: statusCriticality, ![@UI.Importance]: #High },
         { Value: approvedBy_ID },
         { Value: rejectionReason },
-         {
-    $Type: 'UI.DataFieldForAction',
-    Label: 'Create Timesheet',
-    Action: 'PSAService.CreateTimesheet'
-},
         {
-    $Type: 'UI.DataFieldForAction',
-    Label: 'Submit',
-    Action: 'PSAService.SubmitTimesheet'
-},
-
-    ],
-    
+            $Type: 'UI.DataFieldForAction',
+            Label: 'Submit',
+            Action: 'PSAService.SubmitTimesheet'
+        }
+    ]
 );
+
+// 2. Refresh Side Effect: tells UI to re-read the updated row fields upon submit
+annotate service.Timesheets actions {
+    SubmitTimesheet @(
+        Common.SideEffects: {
+            TargetProperties: [
+                'status',
+                'statusCriticality',
+                'submittedDate'
+            ],
+            TargetEntities: [
+                in
+            ]
+        }
+    );
+};
 
 annotate service.Tasks with @(
     UI.LineItem #Assigned: [
@@ -101,7 +111,8 @@ annotate service.Tasks with @(
         { Value: priority },
         { Value: status },
         { Value: estimatedHours },
-        { Value: actualHours }
+        { Value: actualHours },
+        
     ]
 );
 

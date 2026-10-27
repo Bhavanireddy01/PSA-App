@@ -27,7 +27,6 @@ sap.ui.define([
             this.getView().setModel(this._ui, "ui");
             this.load();
         },
-        
 
         async load() {
             const m = this._ui, d = m.getData(), f = [];
@@ -50,18 +49,26 @@ sap.ui.define([
                     H.api("GET", "Budgets?$filter=status eq 'AtRisk' or status eq 'Breached'&$expand=project($select=projectCode,projectName)").catch(() => ({ value: [] }))
                 ]);
 
-                // Map Projects
-                m.setProperty("/projects", (p.value || []).map(x => ({
-                    ...x,
-                    clientName: x.client ? x.client.clientName : "",
-                    managerName: x.manager ? x.manager.fullName : "",
-                    burn: Number(x.plannedHours) > 0 ? Math.round(Number(x.consumedHours || 0) / Number(x.plannedHours) * 100) : 0
-                })));
+                // Map Projects (explicitly preserving startDate, endDate, and burn percentage)
+                m.setProperty("/projects", (p.value || []).map(x => {
+                    const planned = Number(x.plannedHours || 0);
+                    const consumed = Number(x.consumedHours || 0);
+                    return {
+                        ...x,
+                        startDate: x.startDate || "-",
+                        endDate: x.endDate || "-",
+                        clientName: x.client ? x.client.clientName : "-",
+                        managerName: x.manager ? x.manager.fullName : "-",
+                        burn: planned > 0 ? Math.round((consumed / planned) * 100) : 0
+                    };
+                }));
 
-                // Map Timesheets
+                // Map Timesheets (explicitly preserving weekStartDate and weekEndDate)
                 m.setProperty("/pendingSheets", (sheets.value || []).map(s => ({
                     ...s,
-                    employeeName: s.employee ? s.employee.fullName : s.employee_ID,
+                    weekStartDate: s.weekStartDate || "-",
+                    weekEndDate: s.weekEndDate || "-",
+                    employeeName: s.employee ? s.employee.fullName : (s.employee_ID || "-"),
                     employeeEmail: s.employee ? s.employee.email : ""
                 })));
 
@@ -112,7 +119,7 @@ sap.ui.define([
                 });
 
                 const dlg = new Dialog({
-                    title: `Timesheet Entries - ${sheet.employeeName}`,
+                    title: `Timesheet Entries - ${sheet.employeeName} (${sheet.weekStartDate} to ${sheet.weekEndDate})`,
                     contentWidth: "28rem",
                     content: [list],
                     endButton: new Button({ text: "Close", press: () => dlg.close() }),
@@ -125,7 +132,7 @@ sap.ui.define([
         // Approve Action
         async onApproveTimesheet() {
             const sheet = this._ui.getProperty("/selSheet");
-            MessageBox.confirm(`Approve timesheet for ${sheet.employeeName}?`, {
+            MessageBox.confirm(`Approve timesheet for ${sheet.employeeName} (${sheet.weekStartDate} to ${sheet.weekEndDate})?`, {
                 onClose: async (action) => {
                     if (action !== MessageBox.Action.OK) return;
                     try {

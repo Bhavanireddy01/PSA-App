@@ -11,63 +11,48 @@
                 <content>
                     <!-- Quick-Launch Hub Tiles -->
                     <HBox wrap="Wrap" class="sapUiSmallMargin">
+                        <GenericTile header="Total Employees" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <TileContent>
+                                <NumericContent value="{ui>/kpis/totalEmployees}" valueColor="Good" />
+                            </TileContent>
+                        </GenericTile>
 
-    <GenericTile header="Total Employees"
-        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-        <TileContent>
-            <NumericContent value="{ui>/kpis/totalEmployees}"
-                valueColor="Good" />
-        </TileContent>
-    </GenericTile>
+                        <GenericTile header="Total Clients" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <TileContent>
+                                <NumericContent value="{ui>/kpis/totalClients}" valueColor="Good" />
+                            </TileContent>
+                        </GenericTile>
 
-    <GenericTile header="Total Clients"
-        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-        <TileContent>
-            <NumericContent value="{ui>/kpis/totalClients}"
-                valueColor="Good" />
-        </TileContent>
-    </GenericTile>
+                        <GenericTile header="Total Managers" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <TileContent>
+                                <NumericContent value="{ui>/kpis/totalManagers}" valueColor="Good" />
+                            </TileContent>
+                        </GenericTile>
 
-    <GenericTile header="Total Managers"
-        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-        <TileContent>
-            <NumericContent value="{ui>/kpis/totalManagers}"
-                valueColor="Good" />
-        </TileContent>
-    </GenericTile>
+                        <GenericTile header="Active Projects" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <TileContent>
+                                <NumericContent value="{ui>/kpis/activeProjects}" valueColor="Good" />
+                            </TileContent>
+                        </GenericTile>
 
-    <GenericTile header="Total Departments"
-        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-        <TileContent>
-            <NumericContent value="{ui>/kpis/totalDepartments}"
-                valueColor="Good" />
-        </TileContent>
-    </GenericTile>
+                        <GenericTile header="Monitored Timesheets" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <TileContent>
+                                <NumericContent value="{ui>/kpis/totalSheets}" valueColor="Neutral" />
+                            </TileContent>
+                        </GenericTile>
 
-    <GenericTile header="Active Projects"
-        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-        <TileContent>
-            <NumericContent value="{ui>/kpis/activeProjects}"
-                valueColor="Good" />
-        </TileContent>
-    </GenericTile>
-
-    <GenericTile header="Inactive Employees"
-        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
-        <TileContent>
-            <NumericContent value="{ui>/kpis/inactiveEmployees}"
-                valueColor="Critical" />
-        </TileContent>
-    </GenericTile>
-
-</HBox>
+                        <GenericTile header="Inactive Employees" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <TileContent>
+                                <NumericContent value="{ui>/kpis/inactiveEmployees}" valueColor="Critical" />
+                            </TileContent>
+                        </GenericTile>
+                    </HBox>
 
                     <!-- Workspaces & Governance Tabs -->
                     <IconTabBar class="sapUiResponsiveContentPadding" expandable="false">
                         <items>
 
-
-                            <!-- ================= TAB 2: PROJECTS & BUDGETS (MANAGER GOVERNANCE) ================= -->
+                            <!-- ================= TAB 1: ALL PROJECTS ================= -->
                             <IconTabFilter text="All Projects" icon="sap-icon://project-definition-triangle">
                                 <Table id="projTbl" items="{ui>/projects}" mode="SingleSelectLeft" selectionChange=".onProjSelect"
                                        class="sapUiResponsiveMargin" width="auto" noDataText="No projects found">
@@ -75,12 +60,11 @@
                                         <OverflowToolbar>
                                             <Title text="Global Projects Management"/>
                                             <ToolbarSpacer/>
-                                            <Button text="Open Selected Project" icon="sap-icon://display"
-                                                    enabled="{= !!${ui>/selProj} }" press=".onOpenProjectInManager"/>
-                                            <Button text="Recalculate Budget" icon="sap-icon://refresh"
-                                                    enabled="{= !!${ui>/selProj} }" press=".onRecalcBudget"/>
-                                            <Button text="Delete Project" type="Reject" icon="sap-icon://delete"
-                                                    enabled="{= !!${ui>/selProj} }" press=".onDeleteProject"/>
+                                            <Button text="Create Project" type="Emphasized" icon="sap-icon://add" press=".onCreateProject"/>
+                                            <Button text="Edit Project" icon="sap-icon://edit" enabled="{= !!${ui>/selProj} }" press=".onEditProject"/>
+                                            <Button text="Delete Project" type="Reject" icon="sap-icon://delete" enabled="{= !!${ui>/selProj} }" press=".onDeleteProject"/>
+                                            <ToolbarSeparator/>
+        
                                         </OverflowToolbar>
                                     </headerToolbar>
                                     <columns>
@@ -112,8 +96,44 @@
                                 </Table>
                             </IconTabFilter>
 
+                            <!-- ================= TAB 2: TIMESHEET MONITORING (VIEW-ONLY) ================= -->
+                            <IconTabFilter text="Timesheet Monitoring" icon="sap-icon://timesheet">
+                                <Table id="sheetTbl" items="{ui>/allSheets}" mode="SingleSelectLeft" selectionChange=".onSheetSelect"
+                                       class="sapUiResponsiveMargin" width="auto" noDataText="No timesheets found">
+                                    <headerToolbar>
+                                        <OverflowToolbar>
+                                            <Title text="System Timesheet Audit &amp; Monitoring"/>
+                                            <ToolbarSpacer/>
+                                            <!-- Admin can only view entries, NOT approve or reject -->
+                                        </OverflowToolbar>
+                                    </headerToolbar>
+                                    <columns>
+                                        <Column><Text text="Employee"/></Column>
+                                        <Column><Text text="Week Start"/></Column>
+                                        <Column><Text text="Week End"/></Column>
+                                        <Column hAlign="End"><Text text="Billable Hours"/></Column>
+                                        <Column><Text text="Submitted Date"/></Column>
+                                        <Column><Text text="Status"/></Column>
+                                        <Column><Text text="Rejection / Note"/></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectIdentifier title="{ui>employeeName}" text="{ui>employeeEmail}"/>
+                                                <Text text="{ui>weekStartDate}"/>
+                                                <Text text="{ui>weekEndDate}"/>
+                                                <ObjectNumber number="{ui>totalBillableHours}" unit="hrs"/>
+                                                <Text text="{= ${ui>submittedDate} ? ${ui>submittedDate} : '-' }"/>
+                                                <ObjectStatus text="{ui>status}"
+                                                    state="{= ${ui>status}==='Approved' ? 'Success' : ${ui>status}==='Submitted' ? 'Information' : ${ui>status}==='Rejected' ? 'Error' : 'None'}"/>
+                                                <Text text="{= ${ui>rejectionReason} ? ${ui>rejectionReason} : '-' }"/>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </IconTabFilter>
 
-                            <!-- ================= TAB 4: EMPLOYEES ================= -->
+                            <!-- ================= TAB 3: EMPLOYEES ================= -->
                             <IconTabFilter text="Employees" icon="sap-icon://group">
                                 <Table id="empTbl" items="{ui>/employees}" mode="SingleSelectLeft" selectionChange=".onEmpSelect"
                                        class="sapUiResponsiveMargin" width="auto" noDataText="No employees found">
@@ -150,7 +170,7 @@
                                 </Table>
                             </IconTabFilter>
 
-                            <!-- ================= TAB 5: CLIENTS ================= -->
+                            <!-- ================= TAB 4: CLIENTS ================= -->
                             <IconTabFilter text="Clients" icon="sap-icon://customer">
                                 <Table id="clientTbl" items="{ui>/clients}" mode="SingleSelectLeft" selectionChange=".onClientSelect"
                                        class="sapUiResponsiveMargin" width="auto" noDataText="No clients found">
@@ -179,32 +199,30 @@
                                     </items>
                                 </Table>
                             </IconTabFilter>
-                            <!-- ================= TAB: DEPARTMENTS ================= -->
-<IconTabFilter text="Departments" icon="sap-icon://building">
-    <Table id="depTbl" items="{ui>/departments}" mode="SingleSelectLeft" selectionChange=".onDepSelect"
-           class="sapUiResponsiveMargin" width="auto" noDataText="No departments found">
-        <headerToolbar>
-            <OverflowToolbar>
-                <Title text="Organizational Units / Departments"/>
-                <ToolbarSpacer/>
-                <Button text="Create Department" type="Emphasized" icon="sap-icon://add" press=".onCreateDepartment"/>
-                <Button text="Delete" type="Reject" icon="sap-icon://delete" enabled="{= !!${ui>/selDep} }" press=".onDeleteDepartment"/>
-            </OverflowToolbar>
-        </headerToolbar>
-        <columns>
-            <Column><Text text="Department Code"/></Column>
-            <Column><Text text="Department Name"/></Column>
-        </columns>
-        <items>
-            <ColumnListItem>
-                <cells>
-                    <ObjectIdentifier title="{ui>departmentCode}"/>
-                    <Text text="{ui>departmentName}"/>
-                </cells>
-            </ColumnListItem>
-        </items>
-    </Table>
-</IconTabFilter>
+
+                            <!-- ================= TAB 5: DEPARTMENTS ================= -->
+                            <IconTabFilter text="Departments" icon="sap-icon://building">
+                                <Table id="depTbl" items="{ui>/departments}" mode="SingleSelectLeft" selectionChange=".onDepSelect"
+                                       class="sapUiResponsiveMargin" width="auto" noDataText="No departments found">
+                                    <headerToolbar>
+                                        <OverflowToolbar>
+                                            <Title text="Organizational Units / Departments"/>
+                                        </OverflowToolbar>
+                                    </headerToolbar>
+                                    <columns>
+                                        <Column><Text text="Department Code"/></Column>
+                                        <Column><Text text="Department Name"/></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectIdentifier title="{ui>departmentCode}"/>
+                                                <Text text="{ui>departmentName}"/>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </IconTabFilter>
 
                         </items>
                     </IconTabBar>
