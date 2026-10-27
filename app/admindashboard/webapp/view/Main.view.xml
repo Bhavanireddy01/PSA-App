@@ -1,0 +1,215 @@
+<mvc:View controllerName="psa.admin.controller.Main"
+          xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
+          displayBlock="true" height="100%">
+    <App>
+        <pages>
+            <Page title="Admin Portal - System &amp; Workspace Hub" busy="{ui>/busy}" busyIndicatorDelay="0">
+                <headerContent>
+                    <Button text="Manager Dashboard" icon="sap-icon://manager" type="Transparent" press=".onOpenManagerDashboard"/>
+                    <Button text="Billing Workbench" icon="sap-icon://money-bills" type="Transparent" press=".onOpenBillingWorkbench"/>
+                </headerContent>
+                <content>
+                    <!-- Quick-Launch Hub Tiles -->
+                    <HBox wrap="Wrap" class="sapUiSmallMargin">
+
+    <GenericTile header="Total Employees"
+        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+        <TileContent>
+            <NumericContent value="{ui>/kpis/totalEmployees}"
+                valueColor="Good" />
+        </TileContent>
+    </GenericTile>
+
+    <GenericTile header="Total Clients"
+        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+        <TileContent>
+            <NumericContent value="{ui>/kpis/totalClients}"
+                valueColor="Good" />
+        </TileContent>
+    </GenericTile>
+
+    <GenericTile header="Total Managers"
+        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+        <TileContent>
+            <NumericContent value="{ui>/kpis/totalManagers}"
+                valueColor="Good" />
+        </TileContent>
+    </GenericTile>
+
+    <GenericTile header="Total Departments"
+        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+        <TileContent>
+            <NumericContent value="{ui>/kpis/totalDepartments}"
+                valueColor="Good" />
+        </TileContent>
+    </GenericTile>
+
+    <GenericTile header="Active Projects"
+        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+        <TileContent>
+            <NumericContent value="{ui>/kpis/activeProjects}"
+                valueColor="Good" />
+        </TileContent>
+    </GenericTile>
+
+    <GenericTile header="Inactive Employees"
+        class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+        <TileContent>
+            <NumericContent value="{ui>/kpis/inactiveEmployees}"
+                valueColor="Critical" />
+        </TileContent>
+    </GenericTile>
+
+</HBox>
+
+                    <!-- Workspaces & Governance Tabs -->
+                    <IconTabBar class="sapUiResponsiveContentPadding" expandable="false">
+                        <items>
+
+
+                            <!-- ================= TAB 2: PROJECTS & BUDGETS (MANAGER GOVERNANCE) ================= -->
+                            <IconTabFilter text="All Projects" icon="sap-icon://project-definition-triangle">
+                                <Table id="projTbl" items="{ui>/projects}" mode="SingleSelectLeft" selectionChange=".onProjSelect"
+                                       class="sapUiResponsiveMargin" width="auto" noDataText="No projects found">
+                                    <headerToolbar>
+                                        <OverflowToolbar>
+                                            <Title text="Global Projects Management"/>
+                                            <ToolbarSpacer/>
+                                            <Button text="Open Selected Project" icon="sap-icon://display"
+                                                    enabled="{= !!${ui>/selProj} }" press=".onOpenProjectInManager"/>
+                                            <Button text="Recalculate Budget" icon="sap-icon://refresh"
+                                                    enabled="{= !!${ui>/selProj} }" press=".onRecalcBudget"/>
+                                            <Button text="Delete Project" type="Reject" icon="sap-icon://delete"
+                                                    enabled="{= !!${ui>/selProj} }" press=".onDeleteProject"/>
+                                        </OverflowToolbar>
+                                    </headerToolbar>
+                                    <columns>
+                                        <Column><Text text="Code"/></Column>
+                                        <Column><Text text="Project"/></Column>
+                                        <Column><Text text="Manager"/></Column>
+                                        <Column><Text text="Client"/></Column>
+                                        <Column><Text text="Status"/></Column>
+                                        <Column hAlign="End"><Text text="Planned h"/></Column>
+                                        <Column hAlign="End"><Text text="Consumed h"/></Column>
+                                        <Column width="9rem"><Text text="Burn %"/></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectIdentifier title="{ui>projectCode}"/>
+                                                <Text text="{ui>projectName}"/>
+                                                <Text text="{ui>managerName}"/>
+                                                <Text text="{ui>clientName}"/>
+                                                <ObjectStatus text="{ui>status}"
+                                                    state="{= ${ui>status}==='Active' ? 'Success' : ${ui>status}==='OnHold' ? 'Warning' : 'None'}"/>
+                                                <ObjectNumber number="{ui>plannedHours}"/>
+                                                <ObjectNumber number="{ui>consumedHours}"/>
+                                                <ProgressIndicator percentValue="{ui>burn}" displayValue="{ui>burn}%"
+                                                    state="{= ${ui>burn} >= 100 ? 'Error' : ${ui>burn} >= 80 ? 'Warning' : 'Success'}"/>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </IconTabFilter>
+
+
+                            <!-- ================= TAB 4: EMPLOYEES ================= -->
+                            <IconTabFilter text="Employees" icon="sap-icon://group">
+                                <Table id="empTbl" items="{ui>/employees}" mode="SingleSelectLeft" selectionChange=".onEmpSelect"
+                                       class="sapUiResponsiveMargin" width="auto" noDataText="No employees found">
+                                    <headerToolbar>
+                                        <OverflowToolbar>
+                                            <Title text="Employee Directory"/>
+                                            <ToolbarSpacer/>
+                                            <Button text="Create Employee" type="Emphasized" icon="sap-icon://add" press=".onCreateEmployee"/>
+                                            <Button text="Edit" icon="sap-icon://edit" enabled="{= !!${ui>/selEmp} }" press=".onEditEmployee"/>
+                                            <Button text="Delete" type="Reject" icon="sap-icon://delete" enabled="{= !!${ui>/selEmp} }" press=".onDeleteEmployee"/>
+                                        </OverflowToolbar>
+                                    </headerToolbar>
+                                    <columns>
+                                        <Column><Text text="Full Name"/></Column>
+                                        <Column><Text text="Email"/></Column>
+                                        <Column><Text text="Job Title"/></Column>
+                                        <Column><Text text="Role"/></Column>
+                                        <Column hAlign="End"><Text text="Hourly Rate"/></Column>
+                                        <Column><Text text="Status"/></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectIdentifier title="{ui>fullName}"/>
+                                                <Text text="{ui>email}"/>
+                                                <Text text="{ui>jobTitle}"/>
+                                                <Text text="{ui>role}"/>
+                                                <ObjectNumber number="{ui>hourlyRate}" unit="INR"/>
+                                                <ObjectStatus text="{ui>status}"
+                                                    state="{= ${ui>status}==='Active' ? 'Success' : 'Error'}"/>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </IconTabFilter>
+
+                            <!-- ================= TAB 5: CLIENTS ================= -->
+                            <IconTabFilter text="Clients" icon="sap-icon://customer">
+                                <Table id="clientTbl" items="{ui>/clients}" mode="SingleSelectLeft" selectionChange=".onClientSelect"
+                                       class="sapUiResponsiveMargin" width="auto" noDataText="No clients found">
+                                    <headerToolbar>
+                                        <OverflowToolbar>
+                                            <Title text="Enterprise Clients"/>
+                                            <ToolbarSpacer/>
+                                            <Button text="Activate" type="Accept" enabled="{= ${ui>/selClient/status}==='Inactive' }" press=".onActivateClient"/>
+                                            <Button text="Deactivate" type="Reject" enabled="{= ${ui>/selClient/status}==='Active' }" press=".onDeactivateClient"/>
+                                        </OverflowToolbar>
+                                    </headerToolbar>
+                                    <columns>
+                                        <Column><Text text="Client Name"/></Column>
+                                        <Column><Text text="Contact Email"/></Column>
+                                        <Column><Text text="Status"/></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectIdentifier title="{ui>clientName}"/>
+                                                <Text text="{ui>contactEmail}"/>
+                                                <ObjectStatus text="{ui>status}"
+                                                    state="{= ${ui>status}==='Active' ? 'Success' : 'Error'}"/>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </IconTabFilter>
+                            <!-- ================= TAB: DEPARTMENTS ================= -->
+<IconTabFilter text="Departments" icon="sap-icon://building">
+    <Table id="depTbl" items="{ui>/departments}" mode="SingleSelectLeft" selectionChange=".onDepSelect"
+           class="sapUiResponsiveMargin" width="auto" noDataText="No departments found">
+        <headerToolbar>
+            <OverflowToolbar>
+                <Title text="Organizational Units / Departments"/>
+                <ToolbarSpacer/>
+                <Button text="Create Department" type="Emphasized" icon="sap-icon://add" press=".onCreateDepartment"/>
+                <Button text="Delete" type="Reject" icon="sap-icon://delete" enabled="{= !!${ui>/selDep} }" press=".onDeleteDepartment"/>
+            </OverflowToolbar>
+        </headerToolbar>
+        <columns>
+            <Column><Text text="Department Code"/></Column>
+            <Column><Text text="Department Name"/></Column>
+        </columns>
+        <items>
+            <ColumnListItem>
+                <cells>
+                    <ObjectIdentifier title="{ui>departmentCode}"/>
+                    <Text text="{ui>departmentName}"/>
+                </cells>
+            </ColumnListItem>
+        </items>
+    </Table>
+</IconTabFilter>
+
+                        </items>
+                    </IconTabBar>
+                </content>
+            </Page>
+        </pages>
+    </App>
+</mvc:View>

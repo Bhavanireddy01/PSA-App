@@ -1,0 +1,72 @@
+<mvc:View controllerName="psa.billingworkbench.controller.Main"
+          xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
+          displayBlock="true">
+    <App>
+        <Page title="Billing Workbench" busy="{ui>/busy}" busyIndicatorDelay="0">
+            <content>
+                <HBox wrap="Wrap" class="sapUiSmallMargin">
+                    <GenericTile header="Unbilled Approved Hours" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                        <TileContent><NumericContent value="{ui>/kpi/unbilledHours}" scale="h" withMargin="false"/></TileContent>
+                    </GenericTile>
+                    <GenericTile header="Draft Invoices" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                        <TileContent><NumericContent value="{ui>/kpi/draftInvoices}" withMargin="false"/></TileContent>
+                    </GenericTile>
+                    <GenericTile header="Overdue Amount" class="sapUiTinyMarginBottom">
+                        <TileContent><NumericContent value="{ui>/kpi/overdueAmount}" valueColor="Error" withMargin="false"/></TileContent>
+                    </GenericTile>
+                </HBox>
+
+                <Table id="tbl" items="{ui>/rows}" mode="SingleSelectLeft" selectionChange=".onSelect"
+                       class="sapUiResponsiveMargin" width="auto" growing="true" growingThreshold="50"
+                       noDataText="No invoices found">
+                    <headerToolbar>
+                        <OverflowToolbar>
+                            <Title text="Invoices"/>
+                            <ToolbarSpacer/>
+                            <Select selectedKey="{ui>/status}" change=".load">
+                                <core:Item key="" text="All statuses"/>
+                                <core:Item key="Draft" text="Draft"/>
+                                <core:Item key="Issued" text="Issued"/>
+                                <core:Item key="Paid" text="Paid"/>
+                                <core:Item key="Overdue" text="Overdue"/>
+                                <core:Item key="Cancelled" text="Cancelled"/>
+                            </Select>
+                            <Button text="Generate Invoice" type="Emphasized" icon="sap-icon://add" press=".onGenerate"/>
+                            <Button text="Issue" enabled="{= ${ui>/sel/status}==='Draft' }" press=".onIssue"/>
+                            <Button text="Mark Paid" type="Accept"
+                                    enabled="{= ${ui>/sel/status}==='Issued' || ${ui>/sel/status}==='Overdue' }" press=".onPaid"/>
+                            <Button text="Cancel" type="Reject"
+                                    enabled="{= ${ui>/sel/status}==='Draft' || ${ui>/sel/status}==='Issued' }" press=".onCancel"/>
+                            <Button text="Timesheets" icon="sap-icon://list" enabled="{= !!${ui>/sel} }" press=".onSheets"/>
+                        </OverflowToolbar>
+                    </headerToolbar>
+                    <columns>
+                        <Column><Text text="Invoice No."/></Column>
+                        <Column><Text text="Project"/></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Invoice Date"/></Column>
+                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Due Date"/></Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="Hours"/></Column>
+                        <Column hAlign="End"><Text text="Total"/></Column>
+                        <Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="Tax"/></Column>
+                        <Column><Text text="Status"/></Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem>
+                            <cells>
+                                <ObjectIdentifier title="{ui>invoiceNumber}"/>
+                                <Text text="{ui>projectName}"/>
+                                <Text text="{ui>invoiceDate}"/>
+                                <Text text="{ui>dueDate}"/>
+                                <ObjectNumber number="{ui>billableHours}"/>
+                                <ObjectNumber number="{ui>totalAmt}" unit="{ui>currencyCode}"/>
+                                <ObjectNumber number="{ui>taxAmt}" unit="{ui>currencyCode}"/>
+                                <ObjectStatus text="{ui>status}"
+                                    state="{= ${ui>status}==='Paid' ? 'Success' : ${ui>status}==='Issued' ? 'Warning' : ${ui>status}==='Overdue' ? 'Error' : 'None'}"/>
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </content>
+        </Page>
+    </App>
+</mvc:View>

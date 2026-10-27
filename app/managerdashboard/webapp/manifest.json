@@ -1,0 +1,30 @@
+{
+  "_version": "1.60.0",
+  "sap.app": {
+    "id": "psa.projects",
+    "type": "application",
+    "title": "Manager Dashboard",
+    "description": "Projects, budgets, milestones and tasks",
+    "applicationVersion": { "version": "1.0.0" }
+  },
+  "sap.ui": { "technology": "UI5", "deviceTypes": { "desktop": true, "tablet": true, "phone": true } },
+  "sap.ui5": {
+    "rootView": { "viewName": "psa.projects.view.App", "type": "XML", "async": true, "id": "root" },
+    "dependencies": { "minUI5Version": "1.120.0", "libs": { "sap.m": {}, "sap.ui.core": {}, "sap.ui.layout": {} } },
+    "contentDensities": { "compact": true, "cozy": true },
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router", "type": "View", "viewType": "XML",
+        "viewPath": "psa.projects.view", "controlId": "app", "controlAggregation": "pages", "async": true
+      },
+      "routes": [
+        { "name": "list",   "pattern": "",            "target": "list" },
+        { "name": "detail", "pattern": "project/{id}", "target": "detail" }
+      ],
+      "targets": {
+        "list":   { "viewName": "Main",   "viewId": "list" },
+        "detail": { "viewName": "Detail", "viewId": "detail" }
+      }
+    }
+  }
+}

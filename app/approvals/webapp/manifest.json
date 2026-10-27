@@ -1,0 +1,69 @@
+{
+  "_version": "1.60.0",
+  "sap.app": {
+    "id": "psa.approvals",
+    "type": "application",
+    "title": "Timesheet Approvals",
+    "description": "Approve or reject submitted timesheets",
+    "applicationVersion": { "version": "1.0.0" },
+    "dataSources": {
+      "mainService": { "uri": "/odata/v4/psa/", "type": "OData", "settings": { "odataVersion": "4.0" } }
+    }
+  },
+  "sap.ui": { "technology": "UI5", "deviceTypes": { "desktop": true, "tablet": true, "phone": true } },
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": { "sap.m": {}, "sap.ui.core": {}, "sap.ui.layout": {}, "sap.fe.templates": {} }
+    },
+    "models": {
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": { "operationMode": "Server", "autoExpandSelect": true, "earlyRequests": true }
+      }
+    },
+    "contentDensities": { "compact": true, "cozy": true },
+    "routing": {
+      "routes": [
+        { "pattern": ":?query:", "name": "TimesheetsList", "target": "TimesheetsList" },
+        { "pattern": "Timesheets({key}):?query:", "name": "TimesheetsObjectPage", "target": "TimesheetsObjectPage" }
+      ],
+      "targets": {
+        "TimesheetsList": {
+          "type": "Component", "id": "TimesheetsList", "name": "sap.fe.templates.ListReport",
+          "options": { "settings": {
+            "contextPath": "/Timesheets",
+            "variantManagement": "Page",
+            "defaultTemplateAnnotationPath": "com.sap.vocabularies.UI.v1.SelectionPresentationVariant#Default",
+            "navigation": { "Timesheets": { "detail": { "route": "TimesheetsObjectPage" } } },
+            "controlConfiguration": {
+              "@com.sap.vocabularies.UI.v1.LineItem": {
+                "tableSettings": { "type": "ResponsiveTable", "selectionMode": "Multi" },
+                "actions": {
+                  "Approve": {
+                    "press": "psa.approvals.ext.Approve.onApprove",
+                    "text": "Approve", "visible": true, "enabled": true, "requiresSelection": true
+                  }
+                }
+              }
+            }
+          }}
+        },
+        "TimesheetsObjectPage": {
+          "type": "Component", "id": "TimesheetsObjectPage", "name": "sap.fe.templates.ObjectPage",
+          "options": { "settings": {
+            "contextPath": "/Timesheets",
+            "content": { "header": { "actions": {
+              "Approve": {
+                "press": "psa.approvals.ext.Approve.onApprove",
+                "text": "Approve", "visible": true, "enabled": true
+              }
+            }}}
+          }}
+        }
+      }
+    }
+  },
+  "sap.fiori": { "registrationIds": [], "archeType": "transactional" }
+}

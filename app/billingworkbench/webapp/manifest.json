@@ -1,0 +1,27 @@
+{
+  "_version": "1.60.0",
+  "sap.app": {
+    "id": "psa.billingworkbench",
+    "type": "application",
+    "title": "Billing Workbench",
+    "description": "Generate and manage invoices",
+    "applicationVersion": { "version": "1.0.0" }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": { "desktop": true, "tablet": true, "phone": true }
+  },
+  "sap.ui5": {
+    "rootView": {
+      "viewName": "psa.billingworkbench.view.Main",
+      "type": "XML",
+      "async": true,
+      "id": "main"
+    },
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": { "sap.m": {}, "sap.ui.core": {}, "sap.ui.layout": {} }
+    },
+    "contentDensities": { "compact": true, "cozy": true }
+  }
+}

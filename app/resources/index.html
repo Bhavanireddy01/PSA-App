@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Enterprise PSA - Portals</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .hub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      width: 100%;
+      max-width: 960px;
+    }
+    .portal-tile {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      text-decoration: none;
+      color: #f8fafc;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .portal-tile:hover {
+      transform: translateY(-4px);
+      border-color: #38bdf8;
+    }
+    .tile-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  </style>
+</head>
+<body class="center-screen" style="flex-direction: column;">
+  <div style="text-align: center; margin-bottom: 2.5rem;">
+    <h1>Enterprise Professional Services Automation</h1>
+    <p style="color: #94a3b8; margin-top: 0.5rem;">Select your dedicated departmental portal</p>
+  </div>
+
+  <div class="hub-grid">
+    <a href="admin/login.html" class="portal-tile">
+      <div class="tile-icon role-admin"><i class="fa-solid fa-shield-halved"></i></div>
+      <h3>Admin Portal</h3>
+      <span class="badge-tag badge-admin">Access Gateway</span>
+    </a>
+    <a href="manager/login.html" class="portal-tile">
+      <div class="tile-icon role-manager"><i class="fa-solid fa-user-tie"></i></div>
+      <h3>Manager Portal</h3>
+      <span class="badge-tag badge-manager">Access Gateway</span>
+    </a>
+    <a href="employee/login.html" class="portal-tile">
+      <div class="tile-icon role-employee"><i class="fa-solid fa-laptop-code"></i></div>
+      <h3>Employee Portal</h3>
+      <span class="badge-tag badge-employee">Access Gateway</span>
+    </a>
+    <a href="finance/login.html" class="portal-tile">
+      <div class="tile-icon role-finance"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+      <h3>Finance Portal</h3>
+      <span class="badge-tag badge-finance">Access Gateway</span>
+    </a>
+  </div>
+</body>
+</html>

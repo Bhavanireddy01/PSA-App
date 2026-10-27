@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Employee Login - Enterprise PSA</title>
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body class="center-screen">
+  <div class="portal-card">
+    <div class="brand-header">
+      <div class="brand-icon role-employee"><i class="fa-solid fa-laptop-code"></i></div>
+      <h2>Employee Sign In</h2>
+      <span class="badge-tag badge-employee">Consultant Workspace</span>
+    </div>
+
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Work Email</label>
+        <input type="email" id="email" value="employee@psa.com" required />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" value="123" required />
+      </div>
+      <div id="error" class="error-text"></div>
+      <button type="submit" class="btn-submit">Sign In to Employee Portal</button>
+    </form>
+    <a href="../index.html" class="back-link">← Return to Portal Hub</a>
+  </div>
+
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
+
+      if (email === "employee@psa.com" && pass === "123") {
+        // Navigates directly to your UI5 employees app
+        window.location.href = "../employees/webapp/index.html";
+      } else {
+        document.getElementById("error").textContent = "Invalid Employee credentials.";
+      }
+    }
+  </script>
+</body>
+</html>

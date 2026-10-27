@@ -1,0 +1,113 @@
+<mvc:View controllerName="psa.projects.controller.Detail"
+          xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core">
+    <Page title="{ui>/p/projectName}" showNavButton="true" navButtonPress=".onBack"
+          busy="{ui>/busy}" busyIndicatorDelay="0">
+        <headerContent>
+            <Button text="Edit" icon="sap-icon://edit" press=".onEdit"/>
+            <Button text="Recalculate Budget" icon="sap-icon://refresh" press=".onRecalc"/>
+            <Button text="Delete" icon="sap-icon://delete" type="Reject" press=".onDelete"/>
+        </headerContent>
+        <content>
+            <ObjectHeader title="{ui>/p/projectCode} – {ui>/p/projectName}"
+                          number="{ui>/p/burn}" numberUnit="% hours burnt"
+                          numberState="{= ${ui>/p/burn} >= 100 ? 'Error' : ${ui>/p/burn} >= 80 ? 'Warning' : 'Success'}">
+                <attributes>
+                    <ObjectAttribute title="Client" text="{ui>/p/clientName}"/>
+                    <ObjectAttribute title="Manager" text="{ui>/p/managerName}"/>
+                    <ObjectAttribute title="Billing / Priority" text="{ui>/p/billingType} / {ui>/p/priority}"/>
+                    <ObjectAttribute title="Period" text="{ui>/p/startDate} → {ui>/p/endDate}"/>
+                    <ObjectAttribute title="Hours" text="{ui>/p/consumedHours} of {ui>/p/plannedHours}"/>
+                </attributes>
+                <statuses>
+                    <ObjectStatus text="{ui>/p/status}"
+                        state="{= ${ui>/p/status}==='Active' ? 'Success' : ${ui>/p/status}==='OnHold' ? 'Warning' : ${ui>/p/status}==='Cancelled' ? 'Error' : 'None'}"/>
+                </statuses>
+            </ObjectHeader>
+
+            <IconTabBar expandable="false" class="sapUiResponsiveContentPadding">
+                <items>
+                    <IconTabFilter key="budget" text="Budget" icon="sap-icon://money-bills">
+                        <VBox class="sapUiSmallMargin">
+                            <ObjectStatus title="Budget Status" text="{ui>/b/status}" class="sapUiTinyMarginBottom"
+                                state="{= ${ui>/b/status}==='WithinBudget' ? 'Success' : ${ui>/b/status}==='AtRisk' ? 'Warning' : 'Error'}"/>
+                            <ObjectNumber number="{ui>/b/budgetAmt}" unit="{ui>/b/currencyCode}" emphasized="true"/>
+                            <Label text="Budget" class="sapUiSmallMarginBottom"/>
+                            <ObjectNumber number="{ui>/b/consumedAmt}" unit="{ui>/b/currencyCode}"/>
+                            <Label text="Consumed" class="sapUiSmallMarginBottom"/>
+                            <ObjectNumber number="{ui>/b/remainingAmt}" unit="{ui>/b/currencyCode}"/>
+                            <Label text="Remaining" class="sapUiSmallMarginBottom"/>
+                            <ObjectNumber number="{ui>/b/billingRateHr}" unit="{ui>/b/currencyCode}"/>
+                            <Label text="Billing Rate / Hr"/>
+                        </VBox>
+                    </IconTabFilter>
+
+                    <IconTabFilter key="ms" text="Milestones &amp; Tasks" icon="sap-icon://task">
+                        <Table id="msTable" items="{ui>/ms}" mode="SingleSelectMaster"
+                               selectionChange=".onMsSelect" updateFinished=".onMsUpdated"
+                               noDataText="No milestones yet">
+                            <headerToolbar>
+                                <OverflowToolbar>
+                                    <Title text="Milestones"/>
+                                    <ToolbarSpacer/>
+                                    <Button text="Add Milestone" icon="sap-icon://add" press=".onAddMilestone"/>
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column><Text text="Milestone"/></Column>
+                                <Column><Text text="Start"/></Column>
+                                <Column><Text text="End"/></Column>
+                                <Column><Text text="Priority"/></Column>
+                                <Column><Text text="Status"/></Column>
+                                <Column width="9rem"><Text text="Completion"/></Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem>
+                                    <cells>
+                                        <Text text="{ui>milestoneName}"/>
+                                        <Text text="{ui>startDate}"/>
+                                        <Text text="{ui>endDate}"/>
+                                        <Text text="{ui>priority}"/>
+                                        <Text text="{ui>status}"/>
+                                        <ProgressIndicator percentValue="{ui>completionPercent}" displayValue="{ui>completionPercent}%"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+
+                        <Table items="{ui>/tasks}" class="sapUiMediumMarginTop"
+                               noDataText="Select a milestone to see its tasks">
+                            <headerToolbar>
+                                <OverflowToolbar>
+                                    <Title text="Tasks (click a task to edit)"/>
+                                    <ToolbarSpacer/>
+                                    <Button text="Add Task" icon="sap-icon://add" enabled="{= !!${ui>/selMs} }" press=".onAddTask"/>
+                                </OverflowToolbar>
+                            </headerToolbar>
+                            <columns>
+                                <Column><Text text="Task"/></Column>
+                                <Column><Text text="Assigned To"/></Column>
+                                <Column><Text text="Priority"/></Column>
+                                <Column><Text text="Status"/></Column>
+                                <Column hAlign="End"><Text text="Estimated h"/></Column>
+                                <Column hAlign="End"><Text text="Actual h"/></Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem type="Active" press=".onEditTask">
+                                    <cells>
+                                        <Text text="{ui>taskName}"/>
+                                        <Text text="{ui>assigneeName}"/>
+                                        <Text text="{ui>priority}"/>
+                                        <ObjectStatus text="{ui>status}"
+                                            state="{= ${ui>status}==='Done' ? 'Success' : ${ui>status}==='Blocked' ? 'Error' : ${ui>status}==='InProgress' ? 'Warning' : 'None'}"/>
+                                        <ObjectNumber number="{ui>estimatedHours}"/>
+                                        <ObjectNumber number="{ui>actualHours}"/>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </IconTabFilter>
+                </items>
+            </IconTabBar>
+        </content>
+    </Page>
+</mvc:View>

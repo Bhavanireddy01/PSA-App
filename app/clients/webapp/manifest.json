@@ -1,0 +1,54 @@
+{
+  "_version": "1.60.0",
+  "sap.app": {
+    "id": "psa.clients",
+    "type": "application",
+    "title": "Clients",
+    "description": "Client master data",
+    "applicationVersion": { "version": "1.0.0" },
+    "dataSources": {
+      "mainService": { "uri": "/odata/v4/psa/", "type": "OData", "settings": { "odataVersion": "4.0" } }
+    }
+  },
+  "sap.ui": { "technology": "UI5", "deviceTypes": { "desktop": true, "tablet": true, "phone": true } },
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": { "sap.m": {}, "sap.ui.core": {}, "sap.ui.layout": {}, "sap.fe.templates": {} }
+    },
+    "models": {
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": { "operationMode": "Server", "autoExpandSelect": true, "earlyRequests": true }
+      }
+    },
+    "contentDensities": { "compact": true, "cozy": true },
+    "routing": {
+      "routes": [
+        { "pattern": ":?query:", "name": "ClientsList", "target": "ClientsList" },
+        { "pattern": "Clients({key}):?query:", "name": "ClientsObjectPage", "target": "ClientsObjectPage" }
+      ],
+      "targets": {
+        "ClientsList": {
+          "type": "Component", "id": "ClientsList", "name": "sap.fe.templates.ListReport",
+          "options": { "settings": {
+            "contextPath": "/Clients",
+            "variantManagement": "Page",
+            "navigation": { "Clients": { "detail": { "route": "ClientsObjectPage" } } },
+            "controlConfiguration": {
+              "@com.sap.vocabularies.UI.v1.LineItem": {
+                "tableSettings": { "creationMode": { "name": "NewPage" } }
+              }
+            }
+          }}
+        },
+        "ClientsObjectPage": {
+          "type": "Component", "id": "ClientsObjectPage", "name": "sap.fe.templates.ObjectPage",
+          "options": { "settings": { "contextPath": "/Clients" } }
+        }
+      }
+    }
+  },
+  "sap.fiori": { "registrationIds": [], "archeType": "transactional" }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "miniproject",
+  "version": "1.0.0",
+  "description": "PSA Project",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "@sap/cds": "^10.1.1",
+    "@cap-js/hana": "^3.1.2"
+  },
+  "devDependencies": {
+    "@sap/cds-dk": "^10.1.1",
+    "cds-plugin-ui5": "^0.17.0"
+  },
+  "scripts": {
+    "start": "cds watch",
+    "build": "cds build --production",
+    "watch-projects": "cds watch --open projects/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-clients": "cds watch --open clients/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-employees": "cds watch --open employees/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-departments": "cds watch --open departments/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-approvals": "cds watch --open approvals/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-managerdashboard": "cds watch --open managerdashboard/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-billingworkbench": "cds watch --open billingworkbench/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-mytimesheet": "cds watch --open mytimesheet/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "watch-admindashboard": "cds watch --open admindashboard/index.html?sap-ui-xx-viewCache=false --livereload false"
+  },
+  "cds": {
+    "requires": {
+      "db": {
+        "kind": "hana"
+      }
+    }
+  },
+  "workspaces": [
+    "app/*"
+  ],
+  "sapux": [
+    "app/projects",
+    "app/clients",
+    "app/employees",
+    "app/departments",
+    "app/billing",
+    "app/approvals",
+    "app/managerdashboard",
+    "app/billingworkbench"
+  ]
+}

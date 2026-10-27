@@ -1,0 +1,54 @@
+{
+  "_version": "1.60.0",
+  "sap.app": {
+    "id": "psa.departments",
+    "type": "application",
+    "title": "Departments",
+    "description": "Department master data",
+    "applicationVersion": { "version": "1.0.0" },
+    "dataSources": {
+      "mainService": { "uri": "/odata/v4/psa/", "type": "OData", "settings": { "odataVersion": "4.0" } }
+    }
+  },
+  "sap.ui": { "technology": "UI5", "deviceTypes": { "desktop": true, "tablet": true, "phone": true } },
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": { "sap.m": {}, "sap.ui.core": {}, "sap.ui.layout": {}, "sap.fe.templates": {} }
+    },
+    "models": {
+      "": {
+        "dataSource": "mainService",
+        "preload": true,
+        "settings": { "operationMode": "Server", "autoExpandSelect": true, "earlyRequests": true }
+      }
+    },
+    "contentDensities": { "compact": true, "cozy": true },
+    "routing": {
+      "routes": [
+        { "pattern": ":?query:", "name": "DepartmentsList", "target": "DepartmentsList" },
+        { "pattern": "Departments({key}):?query:", "name": "DepartmentsObjectPage", "target": "DepartmentsObjectPage" }
+      ],
+      "targets": {
+        "DepartmentsList": {
+          "type": "Component", "id": "DepartmentsList", "name": "sap.fe.templates.ListReport",
+          "options": { "settings": {
+            "contextPath": "/Departments",
+            "variantManagement": "Page",
+            "navigation": { "Departments": { "detail": { "route": "DepartmentsObjectPage" } } },
+            "controlConfiguration": {
+              "@com.sap.vocabularies.UI.v1.LineItem": {
+                "tableSettings": { "creationMode": { "name": "NewPage" } }
+              }
+            }
+          }}
+        },
+        "DepartmentsObjectPage": {
+          "type": "Component", "id": "DepartmentsObjectPage", "name": "sap.fe.templates.ObjectPage",
+          "options": { "settings": { "contextPath": "/Departments" } }
+        }
+      }
+    }
+  },
+  "sap.fiori": { "registrationIds": [], "archeType": "transactional" }
+}

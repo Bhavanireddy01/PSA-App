@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manager Login - Enterprise PSA</title>
+  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body class="center-screen">
+  <div class="portal-card">
+    <div class="brand-header">
+      <div class="brand-icon role-manager"><i class="fa-solid fa-user-tie"></i></div>
+      <h2>Manager Sign In</h2>
+      <span class="badge-tag badge-manager">Practice Operations</span>
+    </div>
+
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label>Manager Email</label>
+        <input type="email" id="email" value="manager@psa.com" required />
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="password" value="123" required />
+      </div>
+      <div id="error" class="error-text"></div>
+      <button type="submit" class="btn-submit">Sign In to Manager Dashboard</button>
+    </form>
+    <a href="../index.html" class="back-link">← Return to Portal Hub</a>
+  </div>
+
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const pass = document.getElementById("password").value;
+
+      if (email === "manager@psa.com" && pass === "123") {
+        // Navigates directly to your UI5 managerdashboard app
+        window.location.href = "../managerdashboard/webapp/index.html";
+      } else {
+        document.getElementById("error").textContent = "Invalid Manager credentials.";
+      }
+    }
+  </script>
+</body>
+</html>

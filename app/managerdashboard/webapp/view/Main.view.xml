@@ -1,0 +1,147 @@
+<mvc:View controllerName="psa.projects.controller.Main"
+          xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
+          displayBlock="true" height="100%">
+    <App>
+        <pages>
+            <Page title="Manager Dashboard" busy="{ui>/busy}" busyIndicatorDelay="0">
+                <content>
+                    <!-- KPI Header -->
+                    <HBox wrap="Wrap" class="sapUiSmallMargin">
+                        <GenericTile header="Active Projects" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <TileContent><NumericContent value="{ui>/kpi/activeProjects}" withMargin="false"/></TileContent>
+                        </GenericTile>
+                        <GenericTile header="At-Risk Budgets" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <TileContent><NumericContent value="{ui>/kpi/atRiskBudgets}" valueColor="Critical" withMargin="false"/></TileContent>
+                        </GenericTile>
+                        <GenericTile header="Pending Approvals" class="sapUiTinyMarginEnd sapUiTinyMarginBottom">
+                            <TileContent><NumericContent value="{ui>/kpi/pendingApprovals}" withMargin="false"/></TileContent>
+                        </GenericTile>
+                        <GenericTile header="Unbilled Hours" class="sapUiTinyMarginBottom">
+                            <TileContent><NumericContent value="{ui>/kpi/unbilledHours}" scale="h" withMargin="false"/></TileContent>
+                        </GenericTile>
+                    </HBox>
+
+                    <!-- Tab Container -->
+                    <IconTabBar class="sapUiResponsiveContentPadding" expandable="false">
+                        <items>
+                            <!-- ================= TAB 1: OWN PROJECTS ================= -->
+                            <IconTabFilter text="My Projects" icon="sap-icon://lead">
+                                <Table items="{ui>/projects}" class="sapUiResponsiveMargin" width="auto" growing="true" growingThreshold="50"
+                                       noDataText="No projects assigned to you">
+                                    <headerToolbar>
+                                        <OverflowToolbar>
+                                            <Title text="Projects"/>
+                                            <ToolbarSpacer/>
+                                            <SearchField width="14rem" placeholder="Code or name" value="{ui>/q}" search=".load"/>
+                                            <Select selectedKey="{ui>/status}" change=".load">
+                                                <core:Item key="" text="All statuses"/>
+                                                <core:Item key="Draft" text="Draft"/>
+                                                <core:Item key="Active" text="Active"/>
+                                                <core:Item key="OnHold" text="OnHold"/>
+                                                <core:Item key="Completed" text="Completed"/>
+                                            </Select>
+                                            <Button text="Create Project" type="Emphasized" icon="sap-icon://add" press=".onCreate"/>
+                                        </OverflowToolbar>
+                                    </headerToolbar>
+                                    <columns>
+                                        <Column><Text text="Code"/></Column>
+                                        <Column><Text text="Project"/></Column>
+                                        <Column minScreenWidth="Tablet" demandPopin="true"><Text text="Client"/></Column>
+                                        <Column minScreenWidth="Desktop" demandPopin="true"><Text text="Billing"/></Column>
+                                        <Column><Text text="Status"/></Column>
+                                        <Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="Planned h"/></Column>
+                                        <Column minScreenWidth="Desktop" demandPopin="true" hAlign="End"><Text text="Consumed h"/></Column>
+                                        <Column width="9rem"><Text text="Hours Burn"/></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem type="Navigation" press=".onOpen">
+                                            <cells>
+                                                <ObjectIdentifier title="{ui>projectCode}"/>
+                                                <Text text="{ui>projectName}"/>
+                                                <Text text="{ui>clientName}"/>
+                                                <Text text="{ui>billingType}"/>
+                                                <ObjectStatus text="{ui>status}"
+                                                    state="{= ${ui>status}==='Active' ? 'Success' : ${ui>status}==='OnHold' ? 'Warning' : 'None'}"/>
+                                                <ObjectNumber number="{ui>plannedHours}"/>
+                                                <ObjectNumber number="{ui>consumedHours}"/>
+                                                <ProgressIndicator percentValue="{ui>burn}" displayValue="{ui>burn}%"
+                                                    state="{= ${ui>burn} >= 100 ? 'Error' : ${ui>burn} >= 80 ? 'Warning' : 'Success'}"/>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </IconTabFilter>
+
+                            <!-- ================= TAB 2: TIMESHEET APPROVALS ================= -->
+                            <IconTabFilter text="Timesheet Approvals" icon="sap-icon://approvals" count="{ui>/kpi/pendingApprovals}">
+                                <Table id="approvalTbl" items="{ui>/pendingSheets}" mode="SingleSelectLeft" selectionChange=".onSelectTimesheet"
+                                       class="sapUiResponsiveMargin" width="auto" noDataText="No pending timesheets for approval">
+                                    <headerToolbar>
+
+
+
+
+                        
+                                        <OverflowToolbar>
+                                            <Title text="Submitted Timesheets"/>
+                                            <ToolbarSpacer/>
+                                            <Button text="View Entries" icon="sap-icon://display" enabled="{= !!${ui>/selSheet} }" press=".onViewEntries"/>
+                                            <Button text="Approve" type="Accept" icon="sap-icon://accept" enabled="{= !!${ui>/selSheet} }" press=".onApproveTimesheet"/>
+                                            <Button text="Reject" type="Reject" icon="sap-icon://decline" enabled="{= !!${ui>/selSheet} }" press=".onRejectTimesheet"/>
+                                        </OverflowToolbar>
+                                    </headerToolbar>
+                                    <columns>
+                                        <Column><Text text="Employee"/></Column>
+                                        <Column><Text text="Week Period"/></Column>
+                                        <Column hAlign="End"><Text text="Billable Hours"/></Column>
+                                        <Column><Text text="Submitted Date"/></Column>
+                                        <Column><Text text="Status"/></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectIdentifier title="{ui>employeeName}" text="{ui>employeeEmail}"/>
+                                                <Text text="{ui>weekStartDate} -> {ui>weekEndDate}"/>
+                                                <ObjectNumber number="{ui>totalBillableHours}" unit="h"/>
+                                                <Text text="{ui>submittedDate}"/>
+                                                <ObjectStatus text="{ui>status}" state="Warning"/>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </IconTabFilter>
+
+                            <!-- ================= TAB 3: BUDGET ALERTS ================= -->
+                            <IconTabFilter text="Budget Alerts" icon="sap-icon://alert">
+                                <Table items="{ui>/budgetAlerts}" class="sapUiResponsiveMargin" width="auto" noDataText="No budget threshold alerts">
+                                    <columns>
+                                        <Column><Text text="Project"/></Column>
+                                        <Column hAlign="End"><Text text="Total Budget"/></Column>
+                                        <Column hAlign="End"><Text text="Consumed"/></Column>
+                                        <Column hAlign="End"><Text text="Remaining"/></Column>
+                                        <Column><Text text="Burn Rate"/></Column>
+                                        <Column><Text text="Alert Status"/></Column>
+                                    </columns>
+                                    <items>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <ObjectIdentifier title="{ui>projectName}" text="{ui>projectCode}"/>
+                                                <ObjectNumber number="{ui>budgetAmt}" unit="{ui>currencyCode}"/>
+                                                <ObjectNumber number="{ui>consumedAmt}" unit="{ui>currencyCode}"/>
+                                                <ObjectNumber number="{ui>remainingAmt}" unit="{ui>currencyCode}"/>
+                                                <ProgressIndicator percentValue="{ui>burnPercent}" displayValue="{ui>burnPercent}%"
+                                                    state="{= ${ui>burnPercent} >= 100 ? 'Error' : 'Warning'}"/>
+                                                <ObjectStatus text="{ui>status}"
+                                                    state="{= ${ui>status}==='Breached' ? 'Error' : 'Warning'}"/>
+                                            </cells>
+                                        </ColumnListItem>
+                                    </items>
+                                </Table>
+                            </IconTabFilter>
+                        </items>
+                    </IconTabBar>
+                </content>
+            </Page>
+        </pages>
+    </App>
+</mvc:View>
