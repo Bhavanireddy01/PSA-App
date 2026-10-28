@@ -1,5 +1,52 @@
 {
-  "scopes": [],
-  "attributes": [],
-  "role-templates": []
+  "xsappname": "psa-app",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Admin",
+      "description": "Administrator Access"
+    },
+    {
+      "name": "$XSAPPNAME.Manager",
+      "description": "Manager Access"
+    },
+    {
+      "name": "$XSAPPNAME.Finance",
+      "description": "Finance Access"
+    },
+    {
+      "name": "$XSAPPNAME.Employee",
+      "description": "Employee Access"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Admin",
+      "description": "Admin Role",
+      "scope-references": [
+        "$XSAPPNAME.Admin"
+      ]
+    },
+    {
+      "name": "Manager",
+      "description": "Manager Role",
+      "scope-references": [
+        "$XSAPPNAME.Manager"
+      ]
+    },
+    {
+      "name": "Finance",
+      "description": "Finance Role",
+      "scope-references": [
+        "$XSAPPNAME.Finance"
+      ]
+    },
+    {
+      "name": "Employee",
+      "description": "Employee Role",
+      "scope-references": [
+        "$XSAPPNAME.Employee"
+      ]
+    }
+  ]
 }

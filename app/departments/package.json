@@ -8,11 +8,13 @@
     "sapui5"
   ],
   "main": "webapp/index.html",
-  "dependencies": {},
+  "dependencies": {
+    "@sap/cds-dk": "9.9.7"
+  },
   "devDependencies": {
-    "@ui5/cli": "^4.0.33",
-    "@sap/ux-ui5-tooling": "1",
     "@sap-ux/eslint-plugin-fiori-tools": "^10.0.0",
+    "@sap/ux-ui5-tooling": "1",
+    "@ui5/cli": "^2.14.20",
     "eslint": "^10"
   },
   "scripts": {
